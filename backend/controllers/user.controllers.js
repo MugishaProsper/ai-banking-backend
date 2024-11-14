@@ -1,4 +1,4 @@
-import { User, Account } from '../models/user.models.js';
+import { Transaction, Account } from '../models/user.models.js';
 import bcrypt from 'bcryptjs';
 
 export const createAccount = async (req, res) => {
@@ -70,7 +70,7 @@ export const transferAmount = async (req, res) => {
   const userId = req.user._id;
   const { recipientId, amount, password } = req.body;
   try {
-    const account = await Account.findById(userId);
+    const account = await Account.findById({owner : userId});
     if(!account){
       return res.status(404).json({ message : "You don't have an account" });
     }
@@ -88,6 +88,7 @@ export const transferAmount = async (req, res) => {
 
     await account.save();
     await recipient_account.save();
+    await recordTransaction(userId, recipientId, amount);
 
     return res.status(200).json({ message : `Transfer done successfully. Your new balance is ${account.balance}`})
   } catch (error) {
@@ -95,3 +96,21 @@ export const transferAmount = async (req, res) => {
     return res.status(500).json({ message : "Server error" });
   }
 };
+
+export const recordTransaction = async (senderId, recieverId, amount) => {
+  try {
+    const newTransaction = new Transaction({ sender : senderId, receiver : recieverId, amount : amount });
+    await newTransaction.save();
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+export const makeNotification = async (senderId, receiverId, message) => {
+  try {
+    const newNotification = new Notification({ source : senderId, destination : receiverId, message : message });
+    await newNotification.save();
+  } catch (error) {
+    console.log(error.message)
+  }
+}
