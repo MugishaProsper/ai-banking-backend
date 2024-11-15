@@ -1,7 +1,8 @@
-import { User, Account } from "../models/user.models.js";
+import { User } from "../models/user.models.js";
 import bcrypt from 'bcryptjs'
 import { generateVerificationCode } from "../utils/generate.verification.code.js";
 import { generateTokenAndSetCookie } from "../utils/generate.token.js";
+import { sendVerificationCode } from "../config/email.config.js";
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
@@ -32,7 +33,7 @@ export const register = async (req, res) => {
     };
     const verificationCode = await generateVerificationCode()
     const hashedPassword = await bcrypt.hash(password, 12)
-    const newUser = new User({ firstName, lastName, email, password : hashedPassword, verificationCode });
+    const newUser = new User({ firstName, lastName, email, password : hashedPassword });
     await newUser.save();
     return res.status(200).json(newUser);
   } catch (error) {
@@ -68,4 +69,4 @@ export const verifyCode = async (req, res) => {
     console.error(error.message);
     return res.status(500).json({ message : "Server error" });
   }
-}
+};

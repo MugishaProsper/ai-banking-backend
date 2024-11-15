@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nodemon ./backend/server.js"
   },
-  "type" : "module",
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -17,5 +17,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.1",
     "nodemon": "^3.1.7"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.16"
   }
 }

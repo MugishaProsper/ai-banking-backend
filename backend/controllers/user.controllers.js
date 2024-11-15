@@ -1,7 +1,8 @@
-import { Transaction, Account } from '../models/user.models.js';
+import { Transaction, Account, User } from '../models/user.models.js';
 import bcrypt from 'bcryptjs';
 
 export const createAccount = async (req, res) => {
+  
   const userId = req.user._id;
   const { password } = req.body;
   try {
@@ -90,6 +91,17 @@ export const transferAmount = async (req, res) => {
     await recipient_account.save();
     await recordTransaction(userId, recipientId, amount);
 
+    // fetch sender from account
+
+    const sender = await User.findById(account.owner);
+    if(!sender){
+      return res.status(404).json({ message : "Error fetching sender" })
+    }
+    
+    const message = `You have received ${amount} from ${sender.firstName + " " + sender.lastName}`;
+
+    await notifyTransaction(recipientId, message);
+
     return res.status(200).json({ message : `Transfer done successfully. Your new balance is ${account.balance}`})
   } catch (error) {
     console.error(error.message);
@@ -106,11 +118,24 @@ export const recordTransaction = async (senderId, recieverId, amount) => {
   }
 }
 
-export const makeNotification = async (senderId, receiverId, message) => {
+export const notify = async (senderId, receiverId, message) => {
   try {
-    const newNotification = new Notification({ source : senderId, destination : receiverId, message : message });
+    const newNotification = new Notification({ sender : senderId, destination : receiverId, message : message });
     await newNotification.save();
   } catch (error) {
     console.log(error.message)
+  }
+}
+
+export const notifyTransaction = async (receiverId, message)=> {
+  try {
+    const receiver = await User.findById(receiverId);
+    if(!receiver){
+      return res.status(404).json({ message : "No receiver found" });
+    };
+    const notification = new Notification({ destination : receiverId, message : message });
+    await notification.save();
+  } catch (error) {
+    console.log(error.message);
   }
 }
