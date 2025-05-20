@@ -53,17 +53,26 @@ export const login = async (req, res, next) => {
 export const register = async (req, res, next) => {
   try {
     const { fullNames, username, email, phoneNumber, password } = req.body;
+    console.log(req.body);
+    if (!fullNames || !username || !email || !phoneNumber || !password) {
+      console.log('Missing required fields');
+    }
 
     // Check if user exists
     const existingUser = await User.findOne({
       $or: [{ email }, { username }, { phoneNumber }]
     });
+    console.log(existingUser);
     if (existingUser) {
       return next(new AppError('User already exists with this email, username, or phone number', 401));
     }
 
     // Generate wallet address
     const walletAddress = await generateWalletAddress();
+    console.log(walletAddress);
+    if (!walletAddress) {
+      return next(new AppError('Failed to generate wallet address', 500));
+    }
 
     // Create user
     const user = await User.create({

@@ -1,0 +1,12 @@
+{"level":"info","message":{"ip":"::ffff:127.0.0.1","method":"GET","path":"/api-docs","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"},"timestamp":"2025-05-20T18:40:15.000Z"}
+{"level":"info","message":{"ip":"::ffff:127.0.0.1","method":"GET","path":"/api-docs/","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"},"timestamp":"2025-05-20T18:40:15.668Z"}
+{"level":"info","message":{"ip":"::ffff:127.0.0.1","method":"GET","path":"/api-docs/swagger-ui.css","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"},"timestamp":"2025-05-20T18:40:16.144Z"}
+{"level":"info","message":{"ip":"::ffff:127.0.0.1","method":"GET","path":"/api-docs/swagger-ui-bundle.js","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"},"timestamp":"2025-05-20T18:40:16.154Z"}
+{"level":"info","message":{"ip":"::ffff:127.0.0.1","method":"GET","path":"/api-docs/swagger-ui-standalone-preset.js","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"},"timestamp":"2025-05-20T18:40:16.168Z"}
+{"level":"info","message":{"ip":"::ffff:127.0.0.1","method":"GET","path":"/api-docs/swagger-ui-init.js","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"},"timestamp":"2025-05-20T18:40:16.181Z"}
+{"level":"info","message":{"ip":"::ffff:127.0.0.1","method":"GET","path":"/api-docs/favicon-32x32.png","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"},"timestamp":"2025-05-20T18:40:18.288Z"}
+{"level":"info","message":{"ip":"::ffff:127.0.0.1","method":"GET","path":"/api-docs/favicon-16x16.png","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"},"timestamp":"2025-05-20T18:40:18.311Z"}
+{"level":"info","message":{"ip":"::1","method":"POST","path":"/api/auth/login","userAgent":"PostmanRuntime/7.44.0"},"timestamp":"2025-05-20T18:41:29.913Z"}
+{"level":"info","message":{"ip":"::1","method":"POST","path":"/api/auth/register","userAgent":"PostmanRuntime/7.44.0"},"timestamp":"2025-05-20T19:02:20.032Z"}
+{"level":"info","message":{"ip":"::1","method":"POST","path":"/api/v1/auth/register","userAgent":"PostmanRuntime/7.44.0"},"timestamp":"2025-05-20T19:08:29.834Z"}
+{"level":"info","message":{"ip":"::1","method":"POST","path":"/api/v1/auth/register","userAgent":"PostmanRuntime/7.44.0"},"timestamp":"2025-05-20T19:19:59.283Z"}
