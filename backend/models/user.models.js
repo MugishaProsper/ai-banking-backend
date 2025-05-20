@@ -15,14 +15,8 @@ const accountSchema = mongoose.Schema({
   password : { type : String, required : true }
 });
 
-const transactionSchema = mongoose.Schema({
-  sender : { type : mongoose.Types.ObjectId, ref : 'User' },
-  reciever :{ type : mongoose.Types.ObjectId, ref : 'User' },
-  amount : { type : Number, required : true }
-}, { timestamps : true })
 
 export const User = mongoose.model('User', userSchema);
 export const Account = mongoose.model('Account', accountSchema);
-export const Transaction = mongoose.model('Transaction', transactionSchema)
 
 export default { User, Account, Transaction };

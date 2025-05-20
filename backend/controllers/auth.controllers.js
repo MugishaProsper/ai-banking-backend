@@ -32,6 +32,7 @@ export const register = async (req, res) => {
       return res.status(401).json({ message : "User already exists" });
     };
     const verificationCode = await generateVerificationCode();
+    await sendVerificationCode(email, verificationCode);
     const hashedPassword = await bcrypt.hash(password, 12)
     const newUser = new User({ firstName, lastName, email, password : hashedPassword });
     await newUser.save();
