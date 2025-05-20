@@ -5,12 +5,12 @@ const userSchema = mongoose.Schema({
   lastName : { type : String, required : true },
   email : { type : String, required : true },
   password : { type : String, required : true },
-  verificationCode : { type : String, required : true },
+  verificationCode : { type : String, unique : true },
   isVerified : { type : Boolean, default : false }
 }, { timestamps : true });
 
 const accountSchema = mongoose.Schema({
-  id : { type : mongoose.Types.ObjectId, ref : 'User', required : true },
+  userId : { type : mongoose.Types.ObjectId, ref : 'User', required : true },
   balance : { type : Number, default : 0 },
   password : { type : String, required : true }
 });

@@ -8,7 +8,7 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne(email);
+    const user = await User.findOne({ email });
     if(!user){
       return res.status(404).json({ message : "No user found" });
     };
@@ -17,7 +17,7 @@ export const login = async (req, res) => {
       return res.status(401).json({ message : "Password incorrect" });
     };
     generateTokenAndSetCookie(user._id, res);
-    return res.status(200).json(user);
+    return res.status(200).json({ message : "Logged in successfully" });
   } catch (error) {
     console.error(error.message);
     return res.status(500).json({ message : "Server error" });
@@ -27,11 +27,11 @@ export const login = async (req, res) => {
 export const register = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
   try {
-    const user = await User.findOne(email);
+    const user = await User.findOne({ email : email });
     if(user){
       return res.status(401).json({ message : "User already exists" });
     };
-    const verificationCode = await generateVerificationCode()
+    const verificationCode = await generateVerificationCode();
     const hashedPassword = await bcrypt.hash(password, 12)
     const newUser = new User({ firstName, lastName, email, password : hashedPassword });
     await newUser.save();

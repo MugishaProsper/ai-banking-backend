@@ -2,16 +2,15 @@ import { Transaction, Account, User } from '../models/user.models.js';
 import bcrypt from 'bcryptjs';
 
 export const createAccount = async (req, res) => {
-  
-  const userId = req.user._id;
+  const userId = req.user;
   const { password } = req.body;
   try {
-    const existing_account = await Account.findById(userId);
+    const existing_account = await Account.findOne({ userId : userId });
     if(existing_account){
       return res.status(403).json({ message : "Account already exists" });
     };
-    const hashedPassword = await bcrypt.hash(password, 19)
-    const new_account = new Account({ id : userId, password : hashedPassword });
+    const hashedPassword = await bcrypt.hash(password, 20)
+    const new_account = new Account({ userId : userId, password : hashedPassword });
     await new_account.save();
     return res.status(200).json({ message : "Account created successfully." });
   } catch (error) {
@@ -21,10 +20,10 @@ export const createAccount = async (req, res) => {
 }
 
 export const withdrawAmount = async (req, res) => {
-  const userId = req.user._id;
+  const userId = req.user;
   const { amount, password } = req.body;
   try {
-    const account = await Account.findById(userId);
+    const account = await Account.findOne({ userId : userId });
     if(!account){
       return res.status(404).json({ message : "No account found" });
     }
@@ -57,6 +56,7 @@ export const depositAmount = async (req, res) => {
     if(!isAccountPasswordValid){
       return res.status(401).json({ message : "Incorrect account password" });
     }
+    
     // Implementation of core feature
     account.balance += amount;
     await account.save();
@@ -92,7 +92,6 @@ export const transferAmount = async (req, res) => {
     await recordTransaction(userId, recipientId, amount);
 
     // fetch sender from account
-
     const sender = await User.findById(account.owner);
     if(!sender){
       return res.status(404).json({ message : "Error fetching sender" })
@@ -109,9 +108,9 @@ export const transferAmount = async (req, res) => {
   }
 };
 
-export const recordTransaction = async (senderId, recieverId, amount) => {
+export const recordTransaction = async (senderId, receiverId, amount) => {
   try {
-    const newTransaction = new Transaction({ sender : senderId, receiver : recieverId, amount : amount });
+    const newTransaction = new Transaction({ sender : senderId, receiver : receiverId, amount : amount });
     await newTransaction.save();
   } catch (error) {
     console.log(error.message);
@@ -132,7 +131,7 @@ export const notifyTransaction = async (receiverId, message)=> {
     const receiver = await User.findById(receiverId);
     if(!receiver){
       return res.status(404).json({ message : "No receiver found" });
-    };
+    }
     const notification = new Notification({ destination : receiverId, message : message });
     await notification.save();
   } catch (error) {
