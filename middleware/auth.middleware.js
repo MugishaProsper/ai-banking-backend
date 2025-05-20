@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { User } from '../models/user.models.js';
+import User from '../models/user.models.js';
 
 dotenv.config();
 
@@ -23,7 +23,8 @@ export const authorise = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ message: 'No user found with this token' });
     }
-    req.user = user._id;
+    const userId = user._id;
+    req.user = userId;
     next();
   } catch (error) {
     console.error(error.message);
