@@ -20,8 +20,39 @@ const loginLimiter = rateLimit({
 
 // Security middleware configuration
 export const configureSecurityMiddleware = (app) => {
-  // Set security HTTP headers
-  app.use(helmet());
+  // Set security HTTP headers with helmet
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+        connectSrc: ["'self'"],
+        fontSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        mediaSrc: ["'self'"],
+        frameSrc: ["'none'"]
+      }
+    },
+    crossOriginEmbedderPolicy: true,
+    crossOriginOpenerPolicy: true,
+    crossOriginResourcePolicy: { policy: "same-site" },
+    dnsPrefetchControl: { allow: false },
+    frameguard: { action: 'deny' },
+    hidePoweredBy: true,
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true
+    },
+    ieNoOpen: true,
+    noSniff: true,
+    originAgentCluster: true,
+    permittedCrossDomainPolicies: { permittedPolicies: "none" },
+    referrerPolicy: { policy: "no-referrer" },
+    xssFilter: true
+  }));
 
   // Rate limiting
   app.use('/api/', apiLimiter);
@@ -34,43 +65,6 @@ export const configureSecurityMiddleware = (app) => {
 
   // Prevent parameter pollution
   app.use(hpp());
-
-  // Prevent clickjacking
-  helmet.frameguard({ action: 'deny' });
-
-  // Enable XSS filter in browsers
-  helmet.xssFilter();
-
-  // Disable browser caching
-  helmet.noCache();
-
-  // Disable browser auto-sniffing
-  helmet.noSniff();
-
-  // Hide powered-by header
-  helmet.hidePoweredBy();
-
-  // Set strict transport security
-  helmet.hsts({
-    maxAge: 31536000,
-    includeSubDomains: true,
-    preload: true
-  });
-
-  // Set content security policy
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", 'data:', 'https:'],
-      connectSrc: ["'self'"],
-      fontSrc: ["'self'"],
-      objectSrc: ["'none'"],
-      mediaSrc: ["'self'"],
-      frameSrc: ["'none'"]
-    }
-  });
 };
 
 export { apiLimiter, loginLimiter }; 

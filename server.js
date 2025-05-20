@@ -1,5 +1,4 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import xss from 'xss-clean';
 import mongoSanitize from 'express-mongo-sanitize';
@@ -57,10 +56,9 @@ app.use(hpp());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
-app.use('/api/v1/auth', authRoutes);
+app.use(`/api/${process.env.API_VERSION}/auth`, authRoutes);
 app.use('/api/v1/users', userRoutes);
 
-// Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'success',
@@ -69,23 +67,15 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Handle undefined routes
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-// Global error handler
 app.use(errorHandler);
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
-
-// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-  console.log(`API Documentation available at http://localhost:${PORT}/api-docs`);
+  console.log(`✅ Server is running on http://localhost:${PORT}`);
+  console.log(`✅ API Documentation available at http://localhost:${PORT}/api-docs`);
   connectToDatabase();
 });
