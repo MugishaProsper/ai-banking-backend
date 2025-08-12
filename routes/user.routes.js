@@ -1,13 +1,11 @@
 import express from 'express';
 import { authorise } from '../middleware/auth.middleware.js';
-import { getLoggedInUser } from '../controllers/profile.controllers.js';
+import { changePassword, getLoggedInUser } from '../controllers/profile.controllers.js';
 
 const router = express.Router();
 
-// Apply authentication middleware to all routes
-router.use(authorise);
-
 // Profile management
-router.get('/me', getLoggedInUser);
+router.get('/me', authorise, getLoggedInUser);
+router.put('/me', authorise, changePassword);
 
 export default router;
