@@ -1,8 +1,8 @@
 {
-  "name": "auth-user-management-service",
+  "name": "AI Based Banking System",
   "version": "1.0.0",
   "type": "module",
-  "description": "Authentication & User Management Microservice",
+  "description": "Banking System Backend Module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

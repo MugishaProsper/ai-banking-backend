@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import xss from 'xss-clean';
 import mongoSanitize from 'express-mongo-sanitize';
 import hpp from 'hpp';
 import cookieParser from 'cookie-parser';
@@ -9,12 +8,11 @@ import { dirname } from 'path';
 import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger.js';
-import authRoutes from './routes/auth.routes.js';
-import userRoutes from './routes/user.routes.js';
-import { configureSecurityMiddleware } from './middleware/security.middleware.js';
-import { configureLogger } from './middleware/logger.middleware.js';
-import errorHandler from './middleware/error.middleware.js';
+import authRouter from './routes/auth.routes.js';
+import userRouter from './routes/user.routes.js';
+import walletRouter from './routes/wallet.routes.js';
 import { connectToDatabase } from './config/db.config.js';
+import transactionRouter from './routes/transaction.routes.js';
 
 dotenv.config();
 
@@ -22,10 +20,6 @@ const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-configureSecurityMiddleware(app);
-
-configureLogger(app);
 
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
@@ -38,28 +32,26 @@ app.use(cors({
 
 app.use(mongoSanitize());
 
-app.use(xss());
-
 app.use(hpp());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use(`/api/${process.env.API_VERSION}/auth`, authRoutes);
-app.use(`/api/${process.env.API_VERSION}/users`, userRoutes);
+app.use(`/api/${process.env.API_VERSION}/auth`, authRouter);
+app.use(`/api/${process.env.API_VERSION}/users`, userRouter);
+app.use(`/api/${process.env.API_VERSION}/wallet`, walletRouter);
+app.use(`/api/${process.env.API_VERSION}/transaction`, transactionRouter)
 
 app.get('/health', (req, res) => {
   res.status(200).json({
-    status: 'success',
+    status: '✅ Success',
     message: 'Service is healthy',
     timestamp: new Date().toISOString()
   });
 });
 
 app.all('*', (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+  return next(res.status(505).json({ message: "API endpoint not found on this server" }));
 });
-
-app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
