@@ -5,4 +5,7 @@ const cardSchema = mongoose.Schema({
     card_number : { type : Number, required : true },
     cvc : { type : Number },
     issuer : { type : String, enum : ["AMEX", "MASTERCARD"] }
-})
+}, { timestamps : true });
+
+const Card = mongoose.model("cards", cardSchema);
+export default Card
