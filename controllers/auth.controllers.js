@@ -78,3 +78,45 @@ export const logout = async (req, res) => {
         })
     }
 }
+
+
+export const refreshToken = async (req, res) => {
+    const { refreshToken } = req.headers.authorization.split(" ")[1];
+    try {
+        if (!refreshToken || typeof (refreshToken) == "undefined") {
+            return res.status(404).json({
+                success: false,
+                message: 'No token provided'
+            });
+        };
+        const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+        if (!decoded) {
+            return res.status(401).json({
+                success: false,
+                message: 'Token expired'
+            });
+        }
+        const user = await User.findById(decoded.id).select('-password');
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'No user found with this token'
+            });
+        }
+        const { refreshToken: newRefreshToken, accessToken: newAccessToken } = await generateAuthTokens(user._id, res);
+        return res.status(200).json({
+            success: true,
+            message: "Token refreshed",
+            user: user,
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message
+        })
+    }
+}

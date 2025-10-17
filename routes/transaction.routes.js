@@ -10,4 +10,4 @@ transactionRouter.post("/:receiverWalletAddress", send);
 transactionRouter.get("/", getMyTransactions);
 transactionRouter.get("/:transactionId", getTransactionDetails)
 
-export default transactionRouter
+export default transactionRouter;
