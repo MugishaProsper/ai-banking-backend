@@ -13,6 +13,8 @@ import userRouter from './routes/user.routes.js';
 import walletRouter from './routes/wallet.routes.js';
 import { connectToDatabase } from './config/db.config.js';
 import transactionRouter from './routes/transaction.routes.js';
+import loggerMiddleware from './middleware/logger.middleware.js';
+import logger from './config/logger.js';
 
 dotenv.config();
 
@@ -34,6 +36,8 @@ app.use(mongoSanitize());
 
 app.use(hpp());
 
+app.use(loggerMiddleware)
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(`/api/${process.env.API_VERSION}/auth`, authRouter);
@@ -50,12 +54,13 @@ app.get('/health', (req, res) => {
 });
 
 app.all('*', (req, res, next) => {
+  logger.error("Non existent endpoint called")
   return next(res.status(505).json({ message: "API endpoint not found on this server" }));
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`✅ Server is running on http://localhost:${PORT}`);
-  console.log(`✅ API Documentation available at http://localhost:${PORT}/api-docs`);
+  logger.info(`✅ Server is running on http://localhost:${PORT}`);
+  logger.info(`✅ API Documentation available at http://localhost:${PORT}/api-docs`);
   connectToDatabase();
 });
