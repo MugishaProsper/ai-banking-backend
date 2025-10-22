@@ -1,29 +1,29 @@
 import Transaction from "../models/transaction.model.js";
-import Wallet from "../models/wallet.model.js";
+import Account from "../models/account.model.js";
 import logger from "../config/logger.js";
 
 export const send = async (req, res) => {
     const { id } = req.user;
     const { amount } = req.body;
-    const { receiverWalletAddress } = req.params;
+    const { receiverAccountAddress } = req.params;
     try {
-        const receiverWallet = await Wallet.findOne({ address: receiverWalletAddress });
-        if (!receiverWallet) {
-            logger.error(`${id} failed to send transaction to ${receiverWalletAddress}`)
+        const receiverAccount = await Account.findOne({ address: receiverAccountAddress });
+        if (!receiverAccount) {
+            logger.error(`${id} failed to send transaction to ${receiverAccountAddress}`)
             return res.status(404).json({
                 success: false,
                 message: "Receiver not found"
             });
         }
-        const senderWallet = await Wallet.findOne({ user: id });
-        if (senderWallet.address === receiverWalletAddress) {
-            logger.error(`${id} failed to send transaction to ${receiverWalletAddress}`)
+        const senderAccount = await Account.findOne({ user: id });
+        if (senderAccount.address === receiverAccountAddress) {
+            logger.error(`${id} failed to send transaction to ${receiverAccountAddress}`)
             return res.status(403).json({
                 success: false,
                 message: "You can't send to yourself"
             });
         }
-        if (!senderWallet) {
+        if (!senderAccount) {
             logger.error(`${id} failed to send transaction to ${receiverWalletAddress}`)
             return res.status(404).json({
                 success: false,
@@ -31,7 +31,7 @@ export const send = async (req, res) => {
             });
         }
         if (amount > senderWallet.balance) {
-            logger.error(`${id} failed to send transaction to ${receiverWalletAddress}`)
+            logger.error(`${id} failed to send transaction to ${receiverAccountAddress}`)
             return res.status(403).json({
                 success: false,
                 message: "You don't have enough balance"
@@ -39,19 +39,19 @@ export const send = async (req, res) => {
         }
         const transaction = new Transaction({
             sender: id,
-            receiver: receiverWallet.user,
+            receiver: receiverAccount.user,
             amount: amount
         });
-        Promise.all([senderWallet.balance -= amount, receiverWallet.balance += amount]);
-        Promise.all([senderWallet.save(), receiverWallet.save(), transaction.save()]);
-        logger.info(`${id} sent ${amount} to ${receiverWalletAddress}`)
+        Promise.all([senderAccount.balance -= amount, receiverAccount.balance += amount]);
+        Promise.all([senderAccount.save(), receiverAccount.save(), transaction.save()]);
+        logger.info(`${id} sent ${amount} to ${receiverAccountAddress}`)
         return res.status(200).json({
             success: true,
-            message: `You have sent ${amount} to ${receiverWallet.address}`,
+            message: `You have sent ${amount} to ${receiverAccount.address}`,
             transaction: transaction
         })
     } catch (error) {
-        logger.error(`${id} failed to send transaction to ${receiverWalletAddress}`, error)
+        logger.error(`${id} failed to send transaction to ${receiverAccountAddress}`, error)
         return res.status(500).json({
             success: false,
             message: "Internal server error",

@@ -10,7 +10,7 @@ import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger.js';
 import authRouter from './routes/auth.routes.js';
 import userRouter from './routes/user.routes.js';
-import walletRouter from './routes/wallet.routes.js';
+import accountRouter from './routes/account.routes.js';
 import { connectToDatabase } from './config/db.config.js';
 import transactionRouter from './routes/transaction.routes.js';
 import loggerMiddleware from './middleware/logger.middleware.js';
@@ -41,7 +41,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(`/api/${process.env.API_VERSION}/auth`, authRouter);
 app.use(`/api/${process.env.API_VERSION}/users`, userRouter);
-app.use(`/api/${process.env.API_VERSION}/wallet`, walletRouter);
+app.use(`/api/${process.env.API_VERSION}/wallet`, accountRouter);
 app.use(`/api/${process.env.API_VERSION}/transaction`, transactionRouter)
 
 app.get('/health', (req, res) => {
