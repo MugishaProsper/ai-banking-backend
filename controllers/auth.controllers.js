@@ -1,3 +1,4 @@
+import logger from "../config/logger.js";
 import User from "../models/user.models.js";
 import { generateAuthTokens } from "../utils/generate.token.js";
 
@@ -5,19 +6,23 @@ export const register = async (req, res) => {
     const { fullname, username, email, password } = req.body;
     try {
         const existingUser = await User.findOne({ $or: [{ username: username }, { email: email }] });
-        if (existingUser) return res.status(403).json({
-            success: false,
-            message: "User already exists"
-        });
+        if (existingUser) {
+            logger.error(`${username} or ${email} already exists`)
+            return res.status(403).json({
+                success: false,
+                message: "User already exists"
+            });
+        }
         const user = new User({ fullname, username, email, password });
         await user.save();
+        logger.info(`${user._id} registered`)
         return res.status(201).json({
             success: true,
             message: "User created",
             user: user
         })
     } catch (error) {
-        console.log(error);
+        logger.error(`${email} failed to register`, error)
         return res.status(500).json({
             success: false,
             message: "Internal server error",
@@ -30,16 +35,23 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     try {
         const user = await User.findOne({ email: email }).select("-role");
-        if (!user) return res.status(404).json({
-            success: false,
-            message: "No user with such credentials"
-        })
+        if (!user) {
+            logger.error(`User with ${email} not found`)
+            return res.status(404).json({
+                success: false,
+                message: "No user with such credentials"
+            })
+        }
         const isPasswordValid = await user.comparePassword(password);
-        if (!isPasswordValid) return res.status(404).json({
-            success: false,
-            message: "No user with such credentials"
-        });
+        if (!isPasswordValid) {
+            logger.error(`${user._id} failed to login`)
+            return res.status(404).json({
+                success: false,
+                message: "Incorrect credentials"
+            });
+        }
         const { refreshToken, accessToken } = await generateAuthTokens(user._id, res);
+        logger.info(`${user._id} logged in`);
         return res.status(200).json({
             success: true,
             message: "Logged in successfully",
@@ -48,7 +60,7 @@ export const login = async (req, res) => {
             refreshToken: refreshToken
         })
     } catch (error) {
-        console.log(error);
+        logger.error(`${email} failed to login`, error)
         return res.status(500).json({
             success: false,
             message: "Internal server error",
@@ -64,13 +76,14 @@ export const logout = async (req, res) => {
         message: "You should be logged in to logout"
     })
     try {
+        logger.info(`${id} logged out`);
         return res.clearCookie("token")
             .status(200).json({
                 success: true,
                 message: "Logged out"
             });
     } catch (error) {
-        console.log(error);
+        logger.error(`${id} failed to logout`, error)
         return res.status(500).json({
             success: false,
             message: "Internal server error",
@@ -98,12 +111,14 @@ export const refreshToken = async (req, res) => {
         }
         const user = await User.findById(decoded.id).select('-password');
         if (!user) {
+            logger.error(`${decoded.id} failed to refresh token`)
             return res.status(404).json({
                 success: false,
                 message: 'No user found with this token'
             });
         }
         const { refreshToken: newRefreshToken, accessToken: newAccessToken } = await generateAuthTokens(user._id, res);
+        logger.info(`${user._id} token refreshed`);
         return res.status(200).json({
             success: true,
             message: "Token refreshed",
@@ -112,7 +127,7 @@ export const refreshToken = async (req, res) => {
             refreshToken: newRefreshToken
         })
     } catch (error) {
-        console.log(error);
+        logger.error(`${decoded.id} failed to refresh token`, error)
         return res.status(500).json({
             success: false,
             message: "Internal server error",

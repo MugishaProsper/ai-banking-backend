@@ -10,9 +10,10 @@ export const uploadToCloudinary = async (file, folder = 'banking-app') => {
             folder: folder,
             resource_type: 'auto'
         });
+        logger.info(`File uploaded to Cloudinary: ${result.secure_url}`)
         return result.secure_url;
     } catch (error) {
-        console.error('Cloudinary upload failed:', error);
+        logger.error('Cloudinary upload failed:', error);
         throw error;
     }
 };
