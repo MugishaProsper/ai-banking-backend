@@ -8,6 +8,6 @@ walletRouter.use(authorise);
 
 walletRouter.get("/", getMyWallet);
 walletRouter.post("/", createWallet);
-walletRouter.put("/", updateWallet);
+walletRouter.put("/:walletId", updateWallet);
 
 export default walletRouter

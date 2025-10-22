@@ -1,4 +1,5 @@
 import User from "../models/user.models.js";
+import logger from "../config/logger.js";
 
 export const changePassword = async (req, res) => {
     const { id } = req.user;

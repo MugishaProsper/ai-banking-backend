@@ -1,5 +1,6 @@
 import Wallet from "../models/wallet.model.js";
 import { generateWalletAddress } from "../utils/generate.wallet.address.js"
+import logger from "../config/logger.js";
 
 export const getMyWallet = async (req, res) => {
     const { id } = req.user;
@@ -57,20 +58,20 @@ export const updateWallet = async (req, res) => {
     const { walletId } = req.params;
     try {
         const wallet = await Wallet.findById(walletId).select("-balance");
-        if (!wallet) return  logger.error(`${id} failed to update wallet`) && res.status(404).json({
+        if (!wallet) return  logger.error(`Failed to update wallet ${walletId}`) && res.status(404).json({
             success: false,
             message: "Wallet not found"
         });
         wallet.name = name
         wallet.save();
-        logger.info(`${id} updated wallet`)
+        logger.info(`updated wallet ${walletId}`)
         return res.status(200).json({
             success: true,
             message: "Wallet renamed successfully",
             wallet: wallet
         })
     } catch (error) {
-        logger.error(`${id} failed to update wallet`, error) 
+        logger.error(`Failed to update wallet`, error) 
         return res.status(500).json({
             success: false,
             message: "Internal server error",

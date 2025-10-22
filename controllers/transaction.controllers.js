@@ -1,5 +1,6 @@
 import Transaction from "../models/transaction.model.js";
 import Wallet from "../models/wallet.model.js";
+import logger from "../config/logger.js";
 
 export const send = async (req, res) => {
     const { id } = req.user;
@@ -63,13 +64,6 @@ export const getMyTransactions = async (req, res) => {
     const { id } = req.user;
     try {
         const transactions = await Transaction.find({ $or: [{ sender: id }, { receiver: id }] });
-        if (!transactions || !transactions.length) {
-            logger.error(`${id} failed to get transactions`)
-            return res.status(404).json({
-                success: false,
-                message: "You have no transactions involved"
-            });
-        }
         logger.info(`${id} got transactions`)
         return res.status(200).json({
             success: true,
