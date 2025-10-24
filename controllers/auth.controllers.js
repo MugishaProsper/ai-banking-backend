@@ -22,7 +22,7 @@ export const register = async (req, res) => {
             user: user
         })
     } catch (error) {
-        logger.error(`${email} failed to register`, error)
+        logger.error(`Failed to register ${email}`, error)
         return res.status(500).json({
             success: false,
             message: "Internal server error",
@@ -60,7 +60,7 @@ export const login = async (req, res) => {
             refreshToken: refreshToken
         })
     } catch (error) {
-        logger.error(`${email} failed to login`, error)
+        logger.error(`Failed to login ${email}`, error)
         return res.status(500).json({
             success: false,
             message: "Internal server error",
@@ -83,7 +83,7 @@ export const logout = async (req, res) => {
                 message: "Logged out"
             });
     } catch (error) {
-        logger.error(`${id} failed to logout`, error)
+        logger.error(`Failed to logout ${id}`, error)
         return res.status(500).json({
             success: false,
             message: "Internal server error",
@@ -127,7 +127,7 @@ export const refreshToken = async (req, res) => {
             refreshToken: newRefreshToken
         })
     } catch (error) {
-        logger.error(`${decoded.id} failed to refresh token`, error)
+        logger.error(`Failed to refresh token of ${decoded.id}`, error)
         return res.status(500).json({
             success: false,
             message: "Internal server error",

@@ -30,7 +30,7 @@ export const createAccount = async (req, res) => {
     const { id } = req.user;
     try {
         const existingAccount = await Account.findOne({ user: id });
-        if (existingAccount) return  logger.error(`${id} failed to create account`) && res.status(403).json({
+        if (existingAccount) return logger.error(`${id} failed to create account`) && res.status(403).json({
             success: false,
             message: "Account already exists"
         });
